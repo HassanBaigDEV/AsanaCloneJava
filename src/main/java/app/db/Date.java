@@ -1,6 +1,7 @@
 package app.db;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Date implements Serializable {
     private int day;
@@ -61,4 +62,15 @@ public class Date implements Serializable {
     }
 
 
+    public int getDifference(LocalDate date) {
+
+        if((this.getYear()-date.getYear())!=0){
+            System.out.println(this.getYear()-date.getYear());
+            return (this.getYear()-date.getYear());
+                   }
+        else if((this.getMonth() - date.getMonthValue()) !=0){
+            return (this.getMonth()-date.getMonthValue());
+        }
+        else return (this.getDay()-date.getDayOfMonth());
+    }
 }

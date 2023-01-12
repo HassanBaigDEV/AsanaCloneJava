@@ -8,6 +8,7 @@ import app.db.Users;
 import app.db.userAuth;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 public class LoginUI extends JFrame {
     public LoginUI() {
@@ -190,6 +191,10 @@ public class LoginUI extends JFrame {
     private void signUpBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signUpBtnMouseClicked
         // TODO add your handling code here:
         try{
+            if(Arrays.toString(signUpPasswordTxtField.getPassword()).isEmpty() || signUpEmailAddressTxtField.getText().isEmpty()|| signUpUserNameTxtField.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Sign Up Failed");
+                return;
+            }
             Users user = new Users(signUpUserNameTxtField.getText(),signUpPasswordTxtField.getPassword(),signUpEmailAddressTxtField.getText());
            if(userAuth.signUp(user)>0) {
                signUpUserNameTxtField.setText("");

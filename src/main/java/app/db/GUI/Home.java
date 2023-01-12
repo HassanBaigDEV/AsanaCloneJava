@@ -4,6 +4,7 @@
  */
 package app.db.GUI;
 
+import app.db.PriorityQueue;
 import app.db.Projects;
 import app.db.Task;
 import app.db.Users;
@@ -15,10 +16,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+//import java.util.PriorityQueue;
 
 import static app.db.Projects.getProject;
 
 public class Home extends JFrame {
+    ArrayList<String> recentTasks = new ArrayList<>();
+    ArrayList<String> priorityTasks = new ArrayList<>();
+    ArrayList<String> priorityProjects= new ArrayList<>();
+    PriorityQueue<String> priorityTasksPQ = new PriorityQueue<>();
+    PriorityQueue<String>  priorityProjectsPQ = new PriorityQueue<>();
+
 
     public Home() {
         initComponents();
@@ -67,6 +76,7 @@ public class Home extends JFrame {
         projectsTable = new javax.swing.JTable();
         addNewProjectBtn = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
+
         int completed=0;
         int pending = 0;
         int overdue=0;
@@ -99,6 +109,7 @@ public class Home extends JFrame {
         mytasks.setFont(new java.awt.Font("Sitka Heading", 1, 18)); // NOI18N
         mytasks.setForeground(new java.awt.Color(255, 255, 255));
         mytasks.setText("My Tasks");
+
         mytasks.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 mytasksMouseClicked(evt);
@@ -166,8 +177,20 @@ public class Home extends JFrame {
         priorityTasksList.setBackground(new java.awt.Color(102, 102, 102));
         priorityTasksList.setBorder(null);
         priorityTasksList.setForeground(new java.awt.Color(255, 255, 255));
+
+        for(Task task:Users.currentUser.getTasks()){
+            //System.out.println(task.toString());
+            String taskName = task.getTaskName();
+            priorityTasksPQ.push(taskName,task.getTaskDueDate().getDifference(java.time.LocalDate.now()));
+        }
+        for(int i=0;i<=5;++i){
+            if(priorityTasksPQ.peek()!=null) {
+                priorityTasks.add(priorityTasksPQ.peek());
+                priorityTasksPQ.pop();
+            }
+        }
         priorityTasksList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = priorityTasks.toArray(new String[0]);
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -206,8 +229,20 @@ public class Home extends JFrame {
         priorityProjectsList.setBackground(new java.awt.Color(102, 102, 102));
         priorityProjectsList.setBorder(null);
         priorityProjectsList.setForeground(new java.awt.Color(255, 255, 255));
+
+        for(String projectName:Users.currentUser.getProjects()){
+            Projects project = app.db.Projects.getProject(projectName);
+            if(project.getDueDate()!=null)
+            priorityProjectsPQ.push(projectName,project.getDueDate().getDifference(java.time.LocalDate.now()));
+        }
+        for(int i=0;i<=5;++i){
+            if(priorityProjectsPQ.peek()!=null) {
+                priorityProjects.add(priorityProjectsPQ.peek());
+                priorityProjectsPQ.pop();
+            }
+        }
         priorityProjectsList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = priorityProjects.toArray(new String[0]);
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -236,13 +271,36 @@ public class Home extends JFrame {
 
         jLabel7.setFont(new java.awt.Font("Sitka Heading", 1, 16)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+
+
         jLabel7.setText("      Recent Tasks and Projects");
 
         recentTasksLists.setBackground(new java.awt.Color(102, 102, 102));
         recentTasksLists.setBorder(null);
         recentTasksLists.setForeground(new java.awt.Color(255, 255, 255));
+
+            recentTasks.add("TASKS:");
+        for(int i=1;i<4;++i){
+            try{
+                recentTasks.add(Users.currentUser.getTasks().get((Users.currentUser.getTasks().size())-i).getTaskName());
+            }catch (IndexOutOfBoundsException e){
+                System.out.println(e.getMessage());
+                break;
+            }
+        }
+        recentTasks.add("  ");
+        recentTasks.add("PROJECTS:");
+        for(int i=1;i<4;++i){
+            try{
+                recentTasks.add(Users.currentUser.getProjects().get(Users.currentUser.getProjects().size()-i));
+            }catch (IndexOutOfBoundsException e){
+                System.out.println(e.getMessage());
+                break;
+            }
+        }
+
         recentTasksLists.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = recentTasks.toArray(new String[0]);
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -342,6 +400,7 @@ public class Home extends JFrame {
         comboBox2.addItem("Completed");
         comboBox2.addItem("OverDue");
 
+        //noinspection rawtypes
         MyTasksTable.setModel(new javax.swing.table.DefaultTableModel(
                 obj2,
 
@@ -538,7 +597,8 @@ public class Home extends JFrame {
         for (int j = 0; j < Users.currentUser.getProjects().size(); ++j) {
             Projects project = getProject(Users.currentUser.getProjects().get(j));
             // System.out.println(project.toString());
-            obj[j][1] = project.getDueDate().toString();
+            if(project.getDueDate()!=null)
+                 obj[j][1] = project.getDueDate().toString();
         }
         for (int j = 0; j < Users.currentUser.getProjects().size(); ++j) {
             Projects project = getProject(Users.currentUser.getProjects().get(j));

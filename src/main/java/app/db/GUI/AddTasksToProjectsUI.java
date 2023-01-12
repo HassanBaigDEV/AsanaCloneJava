@@ -74,8 +74,8 @@ public class AddTasksToProjectsUI extends JFrame {
             AddProjectTaskBtn.setText("Add Task");
             AddProjectTaskBtn.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    Date startDate = new Date((Integer) projectTaskStartDateYear.getSelectedItem(),(Integer) projectTaskStartDateMonth.getSelectedItem(),(Integer) projectTaskStartDateDay.getSelectedItem());
-                    Date dueDate = new Date((Integer) projectTaskDueDateYear.getSelectedItem(),(Integer) projectTaskDueDateMonth.getSelectedItem(),(Integer) projectTaskDueDateDay.getSelectedItem());
+                    Date startDate = new Date((Integer) projectTaskStartDateDay.getSelectedItem(),(Integer) projectTaskStartDateMonth.getSelectedItem(),(Integer) projectTaskStartDateYear.getSelectedItem());
+                    Date dueDate = new Date((Integer) projectTaskDueDateDay.getSelectedItem(),(Integer) projectTaskDueDateMonth.getSelectedItem(),(Integer) projectTaskDueDateYear.getSelectedItem());
 
                     if(dueDate.getDifference(startDate)>0) {
                         Task task = new Task(project.getProjectName(), projectTaskNameTxtField.getText(),startDate ,dueDate );

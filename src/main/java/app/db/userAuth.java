@@ -38,7 +38,8 @@ public class userAuth implements Serializable {
             oos = new MyObjectOutputStream(new FileOutputStream(file,true));
         }
         else{
-        oos = new ObjectOutputStream(new FileOutputStream(file));
+            file.createNewFile();
+        oos = new  ObjectOutputStream(new FileOutputStream(file));
         }
 
         oos.writeObject(user);
@@ -73,7 +74,7 @@ public class userAuth implements Serializable {
             File file = new File("users.ser");
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
             while (true) {
-                System.out.println(ois.readObject());
+
                 Users user = (Users) ois.readObject();
                 users.add(user);
             }
